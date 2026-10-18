@@ -1,0 +1,15 @@
+.DS_Store
+__pycache__/
+.pytest_cache/
+*.py[cod]
+reports/*.json
+.databricks/
+0_data/
+
+.venv/
+spark-warehouse/
+metastore_db/
+derby.log
+.local_lakehouse/
+benchmarks/data/
+demo_data/
