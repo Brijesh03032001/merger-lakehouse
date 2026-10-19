@@ -1,0 +1,40 @@
+# Data contract for the orders landing zone and its Silver/Gold derivatives.
+# CI (tests/test_data_contract.py) fails if this file and the code drift apart.
+dataset: orders
+version: 1
+owner: data-engineering
+source: "{source_root}/orders/landing/*.csv, one or more files per day, header row required"
+
+required_columns:        # a landed file missing any of these is rejected loudly; extra columns are kept in Bronze
+  - order_id
+  - order_placement_date
+  - customer_id
+  - product_id
+  - order_qty
+
+# Every rejected row carries one or more of these in silver.quarantine_orders.quarantine_reasons.
+reason_codes:
+  - missing_order_id
+  - invalid_order_date
+  - invalid_customer_id
+  - invalid_product_id
+  - invalid_order_qty
+  - duplicate_record
+  - unknown_product_id
+  - order_qty_above_limit
+  - malformed_message     # streaming sources only: the message held none of the order fields
+
+rules:
+  max_order_qty: null    # quantities above this are quarantined; null disables the ceiling
+  date_formats:          # a weekday prefix ("Saturday, ") is stripped first
+    - yyyy/MM/dd
+    - dd-MM-yyyy
+    - dd/MM/yyyy
+    - MMMM dd, yyyy
+    - yyyy-MM-dd
+
+quality_gate:
+  min_valid_rate: 0.6    # the health gate fails when the latest daily run is below this
+
+freshness:
+  max_age_hours: 30      # newest silver.orders.read_timestamp must be younger than this
