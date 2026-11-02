@@ -1,0 +1,49 @@
+name: Deploy Databricks bundle
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Bundle target to deploy
+        required: true
+        type: choice
+        options:
+          - dev
+          - prod
+        default: dev
+      run_initial_load:
+        description: Run the historical load after deployment
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: databricks-${{ inputs.target }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target }}
+    env:
+      DATABRICKS_AUTH_TYPE: github-oidc
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ vars.DATABRICKS_CLIENT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Databricks CLI
+        uses: databricks/setup-cli@main
+        with:
+          version: 1.0.0
+      - name: Validate bundle
+        run: databricks bundle validate --target "${{ inputs.target }}"
+      - name: Deploy bundle
+        run: databricks bundle deploy --target "${{ inputs.target }}"
+      - name: Run initial historical load
+        if: ${{ inputs.run_initial_load }}
+        run: databricks bundle run --target "${{ inputs.target }}" fmcg_initial_load
+

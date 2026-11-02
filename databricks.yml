@@ -1,0 +1,93 @@
+bundle:
+  name: fmcg_lakehouse
+  databricks_cli_version: ">=0.278.0"
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog name used by every pipeline task.
+    default: fmcg
+  source_root:
+    description: Root URI containing customers, products, gross_price, and orders prefixes.
+    default: s3://sportsbar-analytics
+  date_start:
+    description: First month included in the date dimension.
+    default: "2024-01-01"
+  date_end:
+    description: Last month included in the date dimension.
+    default: "2025-12-01"
+  incremental_schedule_status:
+    description: Whether the daily incremental schedule is active.
+    default: PAUSED
+  autoloader_schedule_status:
+    description: >-
+      Whether the Auto Loader ingestion schedule is active. Keep it PAUSED while
+      fmcg_daily_incremental is UNPAUSED: both read the same landing folder.
+    default: PAUSED
+  kafka_schedule_status:
+    description: Whether the Kafka ingestion schedule is active. Keep it PAUSED until a broker is configured.
+    default: PAUSED
+  kafka_bootstrap_servers:
+    description: Kafka bootstrap servers, host:port[,host:port]. Empty means the Kafka job fails fast.
+    default: ""
+  kafka_topic:
+    description: Topic carrying order messages (JSON with the five order fields).
+    default: orders
+  kafka_security_protocol:
+    description: PLAINTEXT, SSL, SASL_SSL or SASL_PLAINTEXT.
+    default: PLAINTEXT
+  kafka_secret_scope:
+    description: Secret scope holding kafka_username and kafka_password (SASL only). Never put credentials in this file.
+    default: ""
+  health_schedule_status:
+    description: Whether the daily data-health check schedule is active.
+    default: PAUSED
+  alert_emails:
+    description: Addresses notified when a job fails or runs long (empty = no email).
+    type: complex
+    default: []
+  merger_date:
+    description: Acquisition date; splits pre_merger and post_merger periods in the unified reports.
+    default: "2025-09-01"
+  max_order_qty:
+    description: Quantity ceiling for the order contract (blank = no ceiling).
+    default: ""
+  min_valid_rate:
+    description: The health gate fails when the latest daily run's valid-row rate is below this.
+    default: "0.6"
+  max_data_age_hours:
+    description: The health gate fails when the newest order is older than this.
+    default: "30"
+
+sync:
+  include:
+    - consolidated_pipeline/**/*.py
+  exclude:
+    - 0_data/**
+    - reports/**
+    - tests/**
+    - .github/**
+
+targets:
+  dev:
+    default: true
+    mode: development
+    variables:
+      catalog: fmcg_dev
+      source_root: /Volumes/fmcg_dev/bronze/landing
+      incremental_schedule_status: PAUSED
+      autoloader_schedule_status: PAUSED
+      kafka_schedule_status: PAUSED
+      health_schedule_status: PAUSED
+
+  prod:
+    mode: production
+    workspace:
+      root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog: fmcg
+      incremental_schedule_status: UNPAUSED
+      health_schedule_status: UNPAUSED
+
