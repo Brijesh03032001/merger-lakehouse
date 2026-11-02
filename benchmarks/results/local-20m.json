@@ -1,0 +1,170 @@
+{
+  "environment": {
+    "machine": "arm64",
+    "system": "macOS-26.5.2-arm64-arm-64bit",
+    "cpu_count": 10,
+    "memory_gb": 16,
+    "pyspark": "4.0.1",
+    "delta_spark": "4.0.1",
+    "spark_master": "local[*]",
+    "driver_memory": "8g",
+    "shuffle_partitions": 32
+  },
+  "history_rows_requested": 20000000,
+  "generate_seconds": 21.2,
+  "full_load": {
+    "seconds": 584.3,
+    "slowest_cells": [
+      {
+        "seconds": 364.4,
+        "starts_with": "# Apply the shared contract. Invalid values are preserved in"
+      },
+      {
+        "seconds": 91.0,
+        "starts_with": "if not (spark.catalog.tableExists(silver_table)):"
+      },
+      {
+        "seconds": 60.4,
+        "starts_with": "# check what's the maximum and minimum date"
+      },
+      {
+        "seconds": 30.4,
+        "starts_with": "df_joined.show(5)"
+      },
+      {
+        "seconds": 14.0,
+        "starts_with": "# DBTITLE 1,Write Delta Table"
+      }
+    ],
+    "tables": {
+      "bronze.orders": {
+        "files": 13,
+        "size_mb": 259.1,
+        "rows": 19997914
+      },
+      "silver.orders": {
+        "files": 11,
+        "size_mb": 187.7,
+        "rows": 15979820
+      },
+      "silver.quarantine_orders": {
+        "files": 16,
+        "size_mb": 57.7,
+        "rows": 4018094
+      },
+      "gold.sb_fact_orders": {
+        "files": 11,
+        "size_mb": 156.9,
+        "rows": 15979820
+      },
+      "gold.fact_orders": {
+        "files": 3,
+        "size_mb": 0.1,
+        "rows": 16870
+      }
+    },
+    "rows_per_second": 34228
+  },
+  "daily_increment": {
+    "batch_notebook_seconds": 14.1,
+    "autoloader_notebook_seconds": 10.0,
+    "full_load_seconds": 584.3,
+    "rows_in_daily_batch": 50000,
+    "incremental_vs_full_reload": 58.4
+  },
+  "before_optimize": {
+    "tables": {
+      "silver.orders": {
+        "files": 76,
+        "size_mb": 188.8,
+        "rows": 16060312
+      },
+      "gold.sb_fact_orders": {
+        "files": 76,
+        "size_mb": 157.8,
+        "rows": 16060312
+      }
+    },
+    "selective_query": {
+      "median_s": 0.099,
+      "min_s": 0.088,
+      "runs": [
+        0.218,
+        0.089,
+        0.133,
+        0.099,
+        0.088
+      ]
+    },
+    "files_read_by_selective_query": 11,
+    "micro_batch_merge_without_bounds": {
+      "median_s": 7.09,
+      "runs": [
+        7.1,
+        7.09,
+        6.96
+      ]
+    },
+    "micro_batch_merge_with_bounds": {
+      "median_s": 4.65,
+      "runs": [
+        4.53,
+        4.65,
+        5.32
+      ]
+    }
+  },
+  "after_optimize": {
+    "optimize": {
+      "silver.orders": {
+        "zorder_by": "order_placement_date, customer_id",
+        "seconds": 18.7
+      },
+      "gold.sb_fact_orders": {
+        "zorder_by": "date, customer_code",
+        "seconds": 15.3
+      }
+    },
+    "optimize_target_mb": 8,
+    "tables": {
+      "silver.orders": {
+        "files": 23,
+        "size_mb": 194.1,
+        "rows": 16084187
+      },
+      "gold.sb_fact_orders": {
+        "files": 19,
+        "size_mb": 162.4,
+        "rows": 16084187
+      }
+    },
+    "selective_query": {
+      "median_s": 0.093,
+      "min_s": 0.083,
+      "runs": [
+        0.173,
+        0.119,
+        0.093,
+        0.083,
+        0.084
+      ]
+    },
+    "files_read_by_selective_query": 6,
+    "micro_batch_merge_without_bounds": {
+      "median_s": 7.2,
+      "runs": [
+        7.18,
+        7.2,
+        7.63
+      ]
+    },
+    "micro_batch_merge_with_bounds": {
+      "median_s": 5.47,
+      "runs": [
+        5.4,
+        5.47,
+        5.55
+      ]
+    }
+  }
+}
