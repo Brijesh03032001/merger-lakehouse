@@ -4,11 +4,12 @@
 
 ![FMCG Databricks Lakehouse Pipeline banner](banner.png)
 
-![Databricks Asset Bundles](https://img.shields.io/badge/Databricks-Asset%20Bundles-FF3621)
-![Delta Lake 4.0.1](https://img.shields.io/badge/Delta%20Lake-4.0.1-00ADD8)
-![Apache Spark 4.0.1](https://img.shields.io/badge/Spark-4.0.1-E25A1C)
-![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB)
-![MIT](https://img.shields.io/badge/license-MIT-green)
+![Databricks](https://img.shields.io/badge/Databricks-C42A18?style=for-the-badge&logo=databricks&logoColor=white)
+![Delta Lake](https://img.shields.io/badge/Delta_Lake-0B7285?style=for-the-badge)
+![Apache Spark](https://img.shields.io/badge/Apache_Spark-C24A17?style=for-the-badge&logo=apachespark&logoColor=white)
+![Apache Kafka](https://img.shields.io/badge/Apache_Kafka-231F20?style=for-the-badge&logo=apachekafka&logoColor=white)
+![Python 3.11](https://img.shields.io/badge/Python_3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![MIT License](https://img.shields.io/badge/MIT_License-2EA043?style=for-the-badge)
 
 A Databricks Lakehouse (Bronze → Silver → Gold) that unifies the analytics of a parent FMCG company and a newly acquired startup, with the parts a real merger needs and most tutorials skip: **deciding which customers and products the two companies share**, replay-safe ingestion from files and Kafka, scoped backfills, reconciliation between layers, and reports that are correct as of any past date.
 
